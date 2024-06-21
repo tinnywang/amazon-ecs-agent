@@ -1,0 +1,23 @@
+name: Release Pull Request
+
+on:
+  workflow_dispatch
+    inputs:
+      version:
+        description: Version
+        required: true
+
+jobs:
+  release-pull-request:
+    name: Release Pull Request
+    runs-on: ubuntu-latest
+    if: github.ref_name == "dev"
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          path: src/github.com/aws/amazon-ecs-agent
+      - name: Update CHANGELOG
+        run: |
+          set -ex
+          cd $GITHUB_WORKSPACE
+          grep ${{ inputs.version }} CHANGELOG.md && echo ${{ inputs.version }} already exists
