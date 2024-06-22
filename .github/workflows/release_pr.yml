@@ -11,7 +11,7 @@ jobs:
   release-pull-request:
     name: Release Pull Request
     runs-on: ubuntu-latest
-    if: ${{ github.ref_name == "dev" }}
+    if: github.ref_name == 'dev'
     steps:
       - uses: actions/checkout@v3
         with:
