@@ -11,13 +11,21 @@ jobs:
   release-pull-request:
     name: Release Pull Request
     runs-on: ubuntu-latest
-    if: github.ref_name == 'dev'
+    defaults:
+      run:
+        working-directory: $GITHUB_WORKSPACE/src/github.com/aws/amazon-ecs-agent
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
+          ref: dev
           path: src/github.com/aws/amazon-ecs-agent
       - name: Update CHANGELOG
         run: |
           set -ex
-          cd $GITHUB_WORKSPACE/src/github.com/aws/amazon-ecs-agent
-          grep ${{ inputs.version }} CHANGELOG.md && echo ${{ inputs.version }} already exists
+          : # TODO: update CHANGELOG, exiting early with error if version already exists
+          grep ${{ inputs.version }} CHANGELOG.md
+      - name: Update VERSION
+        run: |
+          set -ex
+          echo ${{ inputs.version }} > VERSION
+          
