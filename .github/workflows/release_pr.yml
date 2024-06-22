@@ -15,6 +15,21 @@ jobs:
       run:
         working-directory: src/github.com/aws/amazon-ecs-agent
     steps:
+      - name: Get GO_VERSION
+        run: |
+          set -eou pipefail
+          go_version=$(cat -e GO_VERSION)
+          go_version=${go_version%?}
+          go_version_length=${#go_version}
+          go_version_re="^([0-9]+\.){1,2}([0-9]+)$"
+          if ! [[ $go_version_length -le 10 && $go_version =~ $go_version_re ]] ; then
+            echo "invalid GO version"
+            exit 1
+          fi
+          echo "GO_VERSION=$go_version" >> $GITHUB_OUTPUT
+      - uses: actions/setup-go@v3
+        with:
+          go-version: ${{ steps.get-go-version.outputs.GO_VERSION }}
       - uses: actions/checkout@v4
         with:
           ref: dev
@@ -22,11 +37,17 @@ jobs:
       - name: Update CHANGELOG
         run: |
           set -ex
-          pwd
           : # TODO: update CHANGELOG, exiting early with error if version already exists
-          grep ${{ inputs.version }} CHANGELOG.md
       - name: Update VERSION
         run: |
           set -ex
           echo ${{ inputs.version }} > VERSION
+          export GOPROXY=direct
+          cd agent/version
+          GO111MODULE=off go run gen/version-gen.go
+      - name: Test
+        run: |
+          set -ex
+          pwd
+          git status
           
