@@ -18,10 +18,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: dev
-          path: src/github.com/aws/amazon-ecs-agent
+          path: .
       - name: Update CHANGELOG
         run: |
           set -ex
+          pwd
           : # TODO: update CHANGELOG, exiting early with error if version already exists
           grep ${{ inputs.version }} CHANGELOG.md
       - name: Update VERSION
