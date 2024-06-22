@@ -19,5 +19,4 @@ jobs:
       - name: Update CHANGELOG
         run: |
           set -ex
-          cd $GITHUB_WORKSPACE
           grep ${{ inputs.version }} CHANGELOG.md && echo ${{ inputs.version }} already exists
