@@ -8,6 +8,25 @@ on:
         required: true
 
 jobs:
+  setup-go:
+    name: Setup Go
+    runs-on: ubuntu-latest
+    steps:
+    - name: Get GO_VERSION
+      run: |
+        set -eou pipefail
+        go_version=$(cat -e GO_VERSION)
+        go_version=${go_version%?}
+        go_version_length=${#go_version}
+        go_version_re="^([0-9]+\.){1,2}([0-9]+)$"
+        if ! [[ $go_version_length -le 10 && $go_version =~ $go_version_re ]] ; then
+          echo "invalid GO version"
+          exit 1
+        fi
+        echo "GO_VERSION=$go_version" >> $GITHUB_OUTPUT
+    - uses: actions/setup-go@v3
+      with:
+        go-version: ${{ steps.get-go-version.outputs.GO_VERSION }}
   release-pull-request:
     name: Release Pull Request
     runs-on: ubuntu-latest
@@ -15,21 +34,6 @@ jobs:
       run:
         working-directory: src/github.com/aws/amazon-ecs-agent
     steps:
-      - name: Get GO_VERSION
-        run: |
-          set -eou pipefail
-          go_version=$(cat -e GO_VERSION)
-          go_version=${go_version%?}
-          go_version_length=${#go_version}
-          go_version_re="^([0-9]+\.){1,2}([0-9]+)$"
-          if ! [[ $go_version_length -le 10 && $go_version =~ $go_version_re ]] ; then
-            echo "invalid GO version"
-            exit 1
-          fi
-          echo "GO_VERSION=$go_version" >> $GITHUB_OUTPUT
-      - uses: actions/setup-go@v3
-        with:
-          go-version: ${{ steps.get-go-version.outputs.GO_VERSION }}
       - uses: actions/checkout@v4
         with:
           ref: dev
