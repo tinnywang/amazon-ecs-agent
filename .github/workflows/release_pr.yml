@@ -19,4 +19,5 @@ jobs:
       - name: Update CHANGELOG
         run: |
           set -ex
+          ls
           grep ${{ inputs.version }} CHANGELOG.md && echo ${{ inputs.version }} already exists
