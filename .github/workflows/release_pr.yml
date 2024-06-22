@@ -19,5 +19,5 @@ jobs:
       - name: Update CHANGELOG
         run: |
           set -ex
-          ls
+          cd $GITHUB_WORKSPACE/src/github.com/aws/amazon-ecs-agent
           grep ${{ inputs.version }} CHANGELOG.md && echo ${{ inputs.version }} already exists
