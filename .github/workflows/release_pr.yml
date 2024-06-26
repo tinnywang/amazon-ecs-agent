@@ -52,10 +52,9 @@ jobs:
           git_branch="v${{ inputs.version }}"
           git checkout -b $git_branch
           git add -A
-          git commit \
-            -c user.name="${GITHUB_ACTOR}" \
+          git -c user.name="${GITHUB_ACTOR}" \
             -c user.email="${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com" \
-            -m "$commit_message"
+            commit -m "$commit_message"
           curl -L \
             -X POST \
             -H "Accept: application/vnd.github+json" \
