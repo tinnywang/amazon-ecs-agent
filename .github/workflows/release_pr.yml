@@ -61,7 +61,6 @@ jobs:
             --title "$commit_message" \
             --body "TODO" \
             --base dev \
-            --head $git_branch \
-            --milestone ${{ inputs.version }}
+            --head $git_branch
           
           
