@@ -33,7 +33,7 @@ jobs:
             exit 1
           fi
           echo "GO_VERSION=$go_version" >> $GITHUB_OUTPUT
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v5
         with:
           go-version: ${{ steps.get-go-version.outputs.GO_VERSION }}
       - name: Update CHANGELOG
@@ -54,8 +54,10 @@ jobs:
           git_branch="v${{ inputs.version }}"
           git checkout -b $git_branch
           git add -A
-          git -c user.name="${GITHUB_ACTOR}" \
-            -c user.email="${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com" \
+          # Commit as the github-actions bot.
+          # https://github.com/actions/checkout?tab=readme-ov-file#push-a-commit-using-the-built-in-token
+          git -c user.name="github-actions[bot]" \
+            -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
             commit -m "$commit_message"
           git push --set-upstream origin $git_branch
           gh pr create \
