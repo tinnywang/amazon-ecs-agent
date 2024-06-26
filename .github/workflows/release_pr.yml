@@ -57,6 +57,7 @@ jobs:
           git -c user.name="${GITHUB_ACTOR}" \
             -c user.email="${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com" \
             commit -m "$commit_message"
+          git push --set-upstream origin $git_branch
           gh pr create \
             --title "$commit_message" \
             --body "TODO" \
