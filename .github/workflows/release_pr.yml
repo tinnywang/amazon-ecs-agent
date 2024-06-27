@@ -65,5 +65,13 @@ jobs:
             --body "TODO" \
             --base dev \
             --head $git_branch
+      - name: Run Status Checks
+        run: |
+          set -ex
+          # GitHub CLI api
+          gh api \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /repos/${{ github.repository }}/commits/$git_branch/check-suites
           
           
