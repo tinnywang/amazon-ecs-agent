@@ -14,6 +14,9 @@ jobs:
     defaults:
       run:
         working-directory: src/github.com/aws/amazon-ecs-agent
+    env:
+      GIT_BRANCH="v${{ inputs.version }}"
+      GIT_COMMIT_MESSAGE="Release ${{ inputs.version }}"
     steps:
       - uses: actions/checkout@v4
         with:
@@ -48,16 +51,14 @@ jobs:
       - name: Commit Changes
         run: |
           set -ex
-          commit_message="Release ${{ inputs.version }}"
-          git_branch="v${{ inputs.version }}"
-          git checkout -b $git_branch
+          git checkout -b ${{ env.GIT_BRANCH }}
           git add -A
           # Commit as the github-actions bot.
           # https://github.com/actions/checkout?tab=readme-ov-file#push-a-commit-using-the-built-in-token
           git -c user.name="github-actions[bot]" \
             -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
-            commit -m "$commit_message"
-          git push --set-upstream origin $git_branch
+            commit -m "$GIT_RELEASE_VERSION"
+          git push --set-upstream origin ${{ env.GIT_BRANCH }}
       - name: Create Pull Request
         env:
           # Create the pull request using amazon-ecs-bot's token instead of $GITHUB_TOKEN
@@ -67,9 +68,9 @@ jobs:
         run: |
           set -ex
           gh pr create \
-            --title "$commit_message" \
+            --title "${{ env.GIT_COMMIT_MESSAGE }}" \
             --body "TODO" \
             --base dev \
-            --head $git_branch
+            --head ${{ env.GIT_BRANCH }}
           
           
