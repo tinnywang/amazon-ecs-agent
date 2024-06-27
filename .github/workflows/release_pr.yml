@@ -15,8 +15,8 @@ jobs:
       run:
         working-directory: src/github.com/aws/amazon-ecs-agent
     env:
-      GIT_BRANCH="v${{ inputs.version }}"
-      GIT_COMMIT_MESSAGE="Release ${{ inputs.version }}"
+      GIT_BRANCH: "v${{ inputs.version }}"
+      GIT_COMMIT_MESSAGE: "Release ${{ inputs.version }}"
     steps:
       - uses: actions/checkout@v4
         with:
