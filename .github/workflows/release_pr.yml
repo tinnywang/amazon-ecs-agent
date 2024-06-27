@@ -11,8 +11,6 @@ jobs:
   release-pull-request:
     name: Release Pull Request
     runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ github.token }}
     defaults:
       run:
         working-directory: src/github.com/aws/amazon-ecs-agent
@@ -47,7 +45,7 @@ jobs:
           export GOPROXY=direct
           cd agent/version
           GO111MODULE=off go run gen/version-gen.go
-      - name: Open Pull Request
+      - name: Commit Changes
         run: |
           set -ex
           commit_message="Release ${{ inputs.version }}"
@@ -60,18 +58,18 @@ jobs:
             -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
             commit -m "$commit_message"
           git push --set-upstream origin $git_branch
+      - name: Create Pull Request
+        env:
+          # Create the pull request using amazon-ecs-bot's token instead of $GITHUB_TOKEN
+          # so that status check workflows still run on the pull request.
+          # https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
+          GH_TOKEN: ${{ secrets.ECS_AGENT_WORKFLOW_SECRET }}
+        run: |
+          set -ex
           gh pr create \
             --title "$commit_message" \
             --body "TODO" \
             --base dev \
             --head $git_branch
-      - name: Run Status Checks
-        run: |
-          set -ex
-          # GitHub CLI api
-          gh api \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            /repos/${{ github.repository }}/commits/$git_branch/check-suites
           
           
