@@ -22,5 +22,5 @@ jobs:
         run: |
           set -ex
           git fetch origin master
-          git remote -vvv
+          git show-ref
           git push -vvv origin master
