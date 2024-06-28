@@ -22,5 +22,5 @@ jobs:
         run: |
           set -ex
           git log HEAD
-          git log origin/master
+          git log refs/remotes/origin/master
           git push origin HEAD:master
