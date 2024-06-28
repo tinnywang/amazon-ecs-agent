@@ -21,4 +21,5 @@ jobs:
       - name: Merge dev into master
         run: |
           set -ex
-          git push origin ref/heads/master
+          git fetch origin master
+          git push origin master
