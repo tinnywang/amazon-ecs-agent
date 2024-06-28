@@ -57,7 +57,7 @@ jobs:
           # https://github.com/actions/checkout?tab=readme-ov-file#push-a-commit-using-the-built-in-token
           git -c user.name="github-actions[bot]" \
             -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
-            commit -m "${{ env.$GIT_COMMIT_MESSAGE }}"
+            commit -m "${{ env.GIT_COMMIT_MESSAGE }}"
           git push --set-upstream origin ${{ env.GIT_BRANCH }}
       - name: Create Pull Request
         env:
