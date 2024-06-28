@@ -1,0 +1,21 @@
+name: Release Agent
+
+on:
+  push:
+    branches: [ "dev" ]
+
+jobs:
+  release-agent:
+    name: Release Agent
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: dev
+          path: src/github.com/aws/amazon-ecs-agent
+      - name: Merge dev into master
+        run: |
+          set -ex
+          git push origin master
