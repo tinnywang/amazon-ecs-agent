@@ -17,6 +17,7 @@ jobs:
           # TODO: remove `ref` so that it defaults to the SHA of the event that triggered the workflow (push to dev).
           ref: dev
           path: src/github.com/aws/amazon-ecs-agent
+          fetch-depth: 0
       - name: Merge dev into master
         env:
           # Create the pull request using amazon-ecs-bot's token instead of $GITHUB_TOKEN
