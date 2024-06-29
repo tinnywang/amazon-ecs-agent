@@ -11,16 +11,20 @@ jobs:
     defaults:
       run:
         working-directory: src/github.com/aws/amazon-ecs-agent
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
         with:
           # TODO: remove `ref` so that it defaults to the SHA of the event that triggered the workflow (push to dev).
           ref: dev
           path: src/github.com/aws/amazon-ecs-agent
-          fetch-depth: 0
       - name: Merge dev into master
+        env:
+          # Create the pull request using amazon-ecs-bot's token instead of $GITHUB_TOKEN
+          # so that status check workflows still run on the pull request.
+          # https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
+          GH_TOKEN: ${{ secrets.ECS_AGENT_WORKFLOW_SECRET }}
         run: |
           set -ex
-          git push origin HEAD:master
+          # TODO: replace --head with the SHA of the event that triggered the workflow.
+          pr_url=$(gh pr create --fill --base master --head HEAD)
+          gh pr merge $pr_url --auto -m
