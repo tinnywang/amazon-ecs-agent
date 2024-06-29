@@ -27,5 +27,5 @@ jobs:
         run: |
           set -ex
           # TODO: replace --head with the SHA of the event that triggered the workflow.
-          pr_url=$(gh pr create --title TODO --body TODO --base master --head HEAD)
+          pr_url=$(gh pr create --fill-first --base master --head dev)
           gh pr merge $pr_url --auto -m
