@@ -18,6 +18,7 @@ jobs:
         with:
           ref: dev
           path: src/github.com/aws/amazon-ecs-agent
+          fetch-depth: 0
       - name: Merge dev into master
         run: |
           set -ex
