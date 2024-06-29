@@ -16,10 +16,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          # TODO: remove `ref` so that it defaults to the SHA of the event that triggered the workflow (push to dev).
           ref: dev
           path: src/github.com/aws/amazon-ecs-agent
           fetch-depth: 0
       - name: Merge dev into master
         run: |
           set -ex
-          git push origin dev:master
+          git push origin HEAD:master
