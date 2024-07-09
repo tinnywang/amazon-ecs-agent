@@ -396,9 +396,11 @@ amazon-linux-sources.tgz:
 	cp packaging/amazon-linux-ami-integrated/amazon-ecs-volume-plugin.socket amazon-ecs-volume-plugin.socket
 	tar -czf ./sources.tgz ecs-init scripts misc agent amazon-ecs-cni-plugins amazon-vpc-cni-plugins agent-container Makefile VERSION RELEASE_COMMIT
 
+VERSION = $(shell cat ecs-init/ECSVERSION)
+
 .amazon-linux-rpm-integrated-done: amazon-linux-sources.tgz
 	test -e SOURCES || ln -s . SOURCES
-	rpmbuild --define "%_topdir $(PWD)" -bb ecs-agent.spec
+	rpmbuild --define "%version ${VERSION}" --define "%_topdir $(PWD)" -bb ecs-agent.spec
 	find RPMS/ -type f -exec cp {} . \;
 	touch .amazon-linux-rpm-integrated-done
 
@@ -429,14 +431,12 @@ amazon-linux-rpm-codebuild: .amazon-linux-rpm-codebuild-done
 	cp packaging/generic-rpm-integrated/amazon-ecs-volume-plugin.socket amazon-ecs-volume-plugin.socket
 	tar -czf ./sources.tgz ecs-init scripts misc agent amazon-ecs-cni-plugins amazon-vpc-cni-plugins agent-container Makefile VERSION GO_VERSION
 	test -e SOURCES || ln -s . SOURCES
-	rpmbuild --define "%_topdir $(PWD)" -bb amazon-ecs-init.spec
+	rpmbuild --define "%version ${VERSION}" --define "%_topdir $(PWD)" -bb amazon-ecs-init.spec
 	find RPMS/ -type f -exec cp {} . \;
 	touch .generic-rpm-integrated-done
 
 # Build init rpm
 generic-rpm-integrated: .generic-rpm-integrated-done
-
-VERSION = $(shell cat ecs-init/ECSVERSION)
 
 .generic-deb-integrated-done: get-cni-sources
 	./scripts/update-version.sh
