@@ -17,6 +17,7 @@ import (
 	"fmt"
 
 	"github.com/aws/amazon-ecs-agent/agent/sighandlers/exitcodes"
+	ecsversion "github.com/aws/amazon-ecs-agent/ecs-version"
 )
 
 // PrintVersions prints the version information on stdout as a multi-line
@@ -27,28 +28,28 @@ import (
 //	    Commit: 4bdc7fc
 func PrintVersion() int {
 	cleanliness := ""
-	if GitDirty {
+	if ecsversion.GitDirty {
 		cleanliness = "\tDirty: true\n"
 	}
 
 	fmt.Printf(`Amazon ECS Agent:
 	Version: %v
 	Commit: %v
-%v`, Version, GitShortHash, cleanliness)
+%v`, ecsversion.Version, ecsversion.GitShortHash, cleanliness)
 
 	return exitcodes.ExitSuccess
 }
 
 // String produces a human-readable string showing the agent version.
 func String() string {
-	ret := "Amazon ECS Agent - v" + Version + " ("
-	if GitDirty {
+	ret := "Amazon ECS Agent - v" + ecsversion.Version + " ("
+	if ecsversion.GitDirty {
 		ret += "*"
 	}
-	return ret + GitShortHash + ")"
+	return ret + ecsversion.GitShortHash + ")"
 }
 
 // Don't prepend the dirty (*) in pathwriter path
 func GitHashString() string {
-	return GitShortHash
+	return ecsversion.GitShortHash
 }

@@ -30,6 +30,7 @@ import (
 	tcshandler "github.com/aws/amazon-ecs-agent/ecs-agent/tcs/handler"
 	"github.com/aws/amazon-ecs-agent/ecs-agent/tcs/model/ecstcs"
 	"github.com/aws/amazon-ecs-agent/ecs-agent/wsclient"
+	ecsversion "github.com/aws/amazon-ecs-agent/ecs-version"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 )
 
@@ -102,7 +103,7 @@ func (session *DockerTelemetrySession) Start(ctx context.Context) error {
 
 // generateVersionInfo generates the agentVersion, agentHash and containerRuntimeVersion from dockerTaskEngine state
 func generateVersionInfo(taskEngine engine.TaskEngine) (string, string, string) {
-	agentVersion := version.Version
+	agentVersion := ecsversion.Version
 	agentHash := version.GitHashString()
 	var containerRuntimeVersion string
 	if dockerVersion, getVersionErr := taskEngine.Version(); getVersionErr == nil {

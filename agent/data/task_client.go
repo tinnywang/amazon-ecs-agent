@@ -18,8 +18,8 @@ import (
 
 	apitask "github.com/aws/amazon-ecs-agent/agent/api/task"
 	"github.com/aws/amazon-ecs-agent/agent/utils"
-	"github.com/aws/amazon-ecs-agent/agent/version"
 	"github.com/aws/amazon-ecs-agent/ecs-agent/logger"
+	ecsversion "github.com/aws/amazon-ecs-agent/ecs-version"
 
 	"github.com/pkg/errors"
 	bolt "go.etcd.io/bbolt"
@@ -57,7 +57,7 @@ func (c *client) GetTasks() ([]*apitask.Task, error) {
 			if err != nil {
 				logger.Info(emptyAgentVersionMsg)
 			} else {
-				if c.Transformer.IsUpgrade(version.Version, agentVersionInDB) {
+				if c.Transformer.IsUpgrade(ecsversion.Version, agentVersionInDB) {
 					data, err = c.Transformer.TransformTask(agentVersionInDB, data)
 					if err != nil {
 						return err

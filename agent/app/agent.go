@@ -68,6 +68,7 @@ import (
 	"github.com/aws/amazon-ecs-agent/ecs-agent/tcs/model/ecstcs"
 	"github.com/aws/amazon-ecs-agent/ecs-agent/utils/retry"
 	"github.com/aws/amazon-ecs-agent/ecs-agent/wsclient"
+	ecsversion "github.com/aws/amazon-ecs-agent/ecs-version"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	aws_credentials "github.com/aws/aws-sdk-go/aws/credentials"
@@ -173,8 +174,8 @@ func newAgent(blackholeEC2Metadata bool, acceptInsecureCert *bool) (agent, error
 		ec2MetadataClient = ec2.NewBlackholeEC2MetadataClient()
 	}
 	logger.Info("Starting Amazon ECS Agent", logger.Fields{
-		"version": version.Version,
-		"commit":  version.GitShortHash,
+		"version": ecsversion.Version,
+		"commit":  ecsversion.GitShortHash,
 	})
 	logger.Info("Loading configuration")
 	cfg, err := config.NewConfig(ec2MetadataClient)
@@ -462,7 +463,7 @@ func (agent *ecsAgent) doStart(containerChangeEventStream *eventstream.EventStre
 	}
 
 	if agent.cfg.Checkpoint.Enabled() {
-		agent.saveMetadata(data.AgentVersionKey, version.Version)
+		agent.saveMetadata(data.AgentVersionKey, ecsversion.Version)
 		agent.saveMetadata(data.AvailabilityZoneKey, agent.availabilityZone)
 		agent.saveMetadata(data.ClusterNameKey, agent.cfg.Cluster)
 		agent.saveMetadata(data.ContainerInstanceARNKey, agent.containerInstanceARN)
@@ -1053,7 +1054,7 @@ func (agent *ecsAgent) startACSSession(
 		inactiveInstanceCB,
 		acsclient.NewACSClientFactory(),
 		metricsfactory.NewNopEntryFactory(),
-		version.Version,
+		ecsversion.Version,
 		version.GitHashString(),
 		dockerVersion,
 		minAgentCfg,

@@ -372,7 +372,7 @@ install-golang:
 	./scripts/install-golang.sh
 
 update-version:
-	source ./scripts/install-golang.sh && go run agent/version/gen/version-gen.go
+	source ./scripts/install-golang.sh && go run ecs-version/gen/version-gen.go
 
 .get-deps-stamp:
 	go install github.com/golang/mock/mockgen@v1.6.0
