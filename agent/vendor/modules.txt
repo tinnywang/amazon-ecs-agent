@@ -78,6 +78,9 @@ github.com/aws/amazon-ecs-agent/ecs-agent/utils/ttime/mocks
 github.com/aws/amazon-ecs-agent/ecs-agent/wsclient
 github.com/aws/amazon-ecs-agent/ecs-agent/wsclient/mock
 github.com/aws/amazon-ecs-agent/ecs-agent/wsclient/wsconn
+# github.com/aws/amazon-ecs-agent/ecs-version v0.0.0 => ../ecs-version
+## explicit; go 1.22
+github.com/aws/amazon-ecs-agent/ecs-version
 # github.com/aws/aws-sdk-go v1.51.3
 ## explicit; go 1.19
 github.com/aws/aws-sdk-go/aws
@@ -561,3 +564,4 @@ sigs.k8s.io/json/internal/golang/encoding/json
 ## explicit; go 1.13
 sigs.k8s.io/structured-merge-diff/v4/value
 # github.com/aws/amazon-ecs-agent/ecs-agent => ../ecs-agent
+# github.com/aws/amazon-ecs-agent/ecs-version => ../ecs-version

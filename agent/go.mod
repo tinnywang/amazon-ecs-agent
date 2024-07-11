@@ -1,11 +1,12 @@
 module github.com/aws/amazon-ecs-agent/agent
 
-go 1.21
+go 1.22
 
-toolchain go1.21.1
+toolchain go1.22.2
 
 require (
 	github.com/aws/amazon-ecs-agent/ecs-agent v0.0.0
+	github.com/aws/amazon-ecs-agent/ecs-version v0.0.0
 	github.com/aws/aws-sdk-go v1.51.3
 	github.com/awslabs/go-config-generator-for-fluentd-and-fluentbit v0.0.0-20210308162251-8959c62cb8f9
 	github.com/cihub/seelog v0.0.0-20170130134532-f561c5e57575
@@ -80,3 +81,5 @@ require (
 )
 
 replace github.com/aws/amazon-ecs-agent/ecs-agent => ../ecs-agent
+
+replace github.com/aws/amazon-ecs-agent/ecs-version => ../ecs-version
