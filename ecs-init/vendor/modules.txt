@@ -12,6 +12,9 @@ github.com/Microsoft/go-winio/pkg/guid
 # github.com/NVIDIA/gpu-monitoring-tools v0.0.0-20180829222009-86f2a9fac6c5
 ## explicit
 github.com/NVIDIA/gpu-monitoring-tools/bindings/go/nvml
+# github.com/aws/amazon-ecs-agent/ecs-version v0.0.0 => ../ecs-version
+## explicit; go 1.22
+github.com/aws/amazon-ecs-agent/ecs-version
 # github.com/aws/aws-sdk-go v1.51.3
 ## explicit; go 1.19
 github.com/aws/aws-sdk-go/aws
@@ -215,5 +218,6 @@ golang.org/x/tools/internal/typesinternal
 # gopkg.in/yaml.v3 v3.0.1
 ## explicit
 gopkg.in/yaml.v3
+# github.com/aws/amazon-ecs-agent/ecs-version => ../ecs-version
 # github.com/coreos/go-systemd => github.com/coreos/go-systemd/v22 v22.0.0
 # github.com/jmespath/go-jmespath => github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af

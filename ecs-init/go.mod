@@ -1,9 +1,12 @@
 module github.com/aws/amazon-ecs-agent/ecs-init
 
-go 1.19
+go 1.22
+
+toolchain go1.22.3
 
 require (
 	github.com/NVIDIA/gpu-monitoring-tools v0.0.0-20180829222009-86f2a9fac6c5
+	github.com/aws/amazon-ecs-agent/ecs-version v0.0.0
 	github.com/aws/aws-sdk-go v1.51.3
 	github.com/cihub/seelog v0.0.0-20170130134532-f561c5e57575
 	github.com/containerd/containerd v1.6.26
@@ -43,6 +46,8 @@ require (
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+replace github.com/aws/amazon-ecs-agent/ecs-version => ../ecs-version
 
 replace github.com/coreos/go-systemd => github.com/coreos/go-systemd/v22 v22.0.0
 

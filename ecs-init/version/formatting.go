@@ -13,22 +13,28 @@
 
 package version
 
-import "fmt"
+import (
+	"fmt"
+
+	ecsversion "github.com/aws/amazon-ecs-agent/ecs-version"
+)
 
 // String construct the version info of ecs-init
 func String() string {
 	dirtyMark := ""
+	// TODO: Do we need the linke flags if we update version with every release?
+	//
 	// Note that GitDirty is defined via command-line linker flags, so
 	// it must be a string rather than a bool
-	if GitDirty == "true" {
+	if ecsversion.GitDirty == true {
 		dirtyMark = "*"
 	}
-	return fmt.Sprintf("ecs-init version %s (%s%s)", Version, dirtyMark, GitShortHash)
+	return fmt.Sprintf("ecs-init version %s (%s%s)", ecsversion.Version, dirtyMark, ecsversion.GitShortHash)
 }
 
 // PrintVersion print out the
 func PrintVersion() error {
-	if Version == "" || GitShortHash == "" {
+	if ecsversion.Version == "" || ecsversion.GitShortHash == "" {
 		return fmt.Errorf("Version info not set")
 	}
 
