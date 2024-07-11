@@ -24,19 +24,26 @@ export GO111MODULE="auto"
 # if it's already installed the script will set env vars and exit
 source ./scripts/install-golang.sh
 
-if [ -d "${TOPWD}/.git" ]; then
-    version=$(cat "${TOPWD}/ecs-init/ECSVERSION")
-    git_hash=$(git rev-parse --short=8 HEAD)
-    git_dirty=false
+# Turn off go module here because version-gen.go is a separate program (i.e. "package main")
+# and no dependency needed to be fetched (but if go mod is on it will try to fetch dependency causing
+# this script to fail when we run it in a container with network mode "none").
+echo "running version gen"
+GO111MODULE=off go run ecs-version/gen/version-gen.go
 
-    if [[ "$(git status --porcelain)" != "" ]]; then
-	git_dirty=true
-    fi
-
-    VERSION_FLAG="-X github.com/aws/amazon-ecs-agent/ecs-init/version.Version=${version}"
-    GIT_HASH_FLAG="-X github.com/aws/amazon-ecs-agent/ecs-init/version.GitShortHash=${git_hash}"
-    GIT_DIRTY_FLAG="-X github.com/aws/amazon-ecs-agent/ecs-init/version.GitDirty=${git_dirty}"
-fi
+# TODO: Confirm whether these -ldflags are redundant.
+# if [ -d "${TOPWD}/.git" ]; then
+#     version=$(cat "${TOPWD}/ecs-init/ECSVERSION")
+#     git_hash=$(git rev-parse --short=8 HEAD)
+#     git_dirty=false
+# 
+#     if [[ "$(git status --porcelain)" != "" ]]; then
+# 	git_dirty=true
+#     fi
+# 
+#     VERSION_FLAG="-X github.com/aws/amazon-ecs-agent/ecs-init/version.Version=${version}"
+#     GIT_HASH_FLAG="-X github.com/aws/amazon-ecs-agent/ecs-init/version.GitShortHash=${git_hash}"
+#     GIT_DIRTY_FLAG="-X github.com/aws/amazon-ecs-agent/ecs-init/version.GitDirty=${git_dirty}"
+# fi
 
 mkdir -p "${SRCPATH}"
 ln -s "${TOPWD}/ecs-init" "${SRCPATH}"

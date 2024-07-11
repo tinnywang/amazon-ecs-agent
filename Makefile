@@ -371,9 +371,6 @@ GOPATH=$(shell go env GOPATH)
 install-golang:
 	./scripts/install-golang.sh
 
-update-version:
-	source ./scripts/install-golang.sh && go run ecs-version/gen/version-gen.go
-
 .get-deps-stamp:
 	go install github.com/golang/mock/mockgen@v1.6.0
 	go install golang.org/x/tools/cmd/goimports@v0.2.0
@@ -400,7 +397,7 @@ amazon-linux-sources.tgz:
 
 VERSION = $(shell cat ecs-init/ECSVERSION)
 
-.amazon-linux-rpm-integrated-done: amazon-linux-sources.tgz update-version
+.amazon-linux-rpm-integrated-done: amazon-linux-sources.tgz
 	test -e SOURCES || ln -s . SOURCES
 	rpmbuild --define "%version ${VERSION}" --define "%_topdir $(PWD)" -bb ecs-agent.spec
 	find RPMS/ -type f -exec cp {} . \;
@@ -410,7 +407,6 @@ amazon-linux-rpm-integrated: .amazon-linux-rpm-integrated-done
 
 # Make target for Amazon Linux Codebuild jobs
 .amazon-linux-rpm-codebuild-done: get-cni-sources
-	./scripts/update-version.sh
 	cp packaging/amazon-linux-ami-integrated/ecs-agent.spec ecs-agent.spec
 	cp packaging/amazon-linux-ami-integrated/ecs.conf ecs.conf
 	cp packaging/amazon-linux-ami-integrated/ecs.service ecs.service
@@ -425,7 +421,7 @@ amazon-linux-rpm-integrated: .amazon-linux-rpm-integrated-done
 
 amazon-linux-rpm-codebuild: .amazon-linux-rpm-codebuild-done
 
-.generic-rpm-integrated-done: get-cni-sources update-version
+.generic-rpm-integrated-done: get-cni-sources
 	cp packaging/generic-rpm-integrated/amazon-ecs-init.spec amazon-ecs-init.spec
 	cp packaging/generic-rpm-integrated/ecs.service ecs.service
 	cp packaging/generic-rpm-integrated/amazon-ecs-volume-plugin.service amazon-ecs-volume-plugin.service
@@ -440,7 +436,6 @@ amazon-linux-rpm-codebuild: .amazon-linux-rpm-codebuild-done
 generic-rpm-integrated: .generic-rpm-integrated-done
 
 .generic-deb-integrated-done: get-cni-sources
-	./scripts/update-version.sh
 	mkdir -p BUILDROOT
 	tar -czf ./amazon-ecs-init_${VERSION}.orig.tar.gz ecs-init scripts README.md
 	cp -r packaging/generic-deb-integrated/debian Makefile ecs-init scripts misc agent agent-container amazon-ecs-cni-plugins amazon-vpc-cni-plugins README.md VERSION GO_VERSION BUILDROOT
