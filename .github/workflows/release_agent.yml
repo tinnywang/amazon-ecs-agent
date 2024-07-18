@@ -25,7 +25,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -ex
-          branchProtectionRule = $(gh api graphql -f query='
+          branchProtectionRule=$(gh api graphql -f query='
           {
             repository(owner: "${{ github.repository_owner }}", name: "${{ github.event.repository.name }}") {
               ref(qualifiedName: "master") {
@@ -34,7 +34,7 @@ jobs:
                 }
               }
             }
-          }' | jq ".data.repository.ref.branchProtectionRule.id")
+          }') | jq ".data.repository.ref.branchProtectionRule.id"
           echo $brachProtectionRule
       - name: Merge dev into master
         env:
