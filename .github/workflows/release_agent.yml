@@ -22,7 +22,7 @@ jobs:
           fetch-depth: 0
       - name: Disable branch protection rule
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.ECS_AGENT_WORKFLOW_SECRET }}
         run: |
           set -ex
           branchProtectionRule=$(gh api graphql -f query='
