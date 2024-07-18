@@ -27,7 +27,7 @@ jobs:
           set -ex
           branchProtectionRule = $(gh api graphql -f query='
           {
-            repository(owner: ${{ github.repository_owner }}, name: ${{ github.event.repository.name }}) {
+            repository(owner: "${{ github.repository_owner }}", name: "${{ github.event.repository.name }}") {
               ref(qualifiedName: "master") {
                 branchProtectionRule {
                   id
