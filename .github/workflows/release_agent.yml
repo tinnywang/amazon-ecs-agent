@@ -1,8 +1,10 @@
 name: Release Agent
 
 on:
-  push:
-    branches: [ "dev" ]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version"
 
 jobs:
   release-agent:
