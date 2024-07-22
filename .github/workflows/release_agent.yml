@@ -37,7 +37,7 @@ jobs:
               }
             }
           }') | jq ".data.repository.ref.branchProtectionRule.id"
-          echo "BRANCH_PROTECTION_RULE_ID=$branch_protection_rule_id" >> "$GITHUB_OUTPUT"
+          echo "BRANCH_PROTECTION_RULE_ID=$branch_protection_rule_id" >> $GITHUB_OUTPUT
       - name: Disable master branch protection rule
         run: |
           set -ex
