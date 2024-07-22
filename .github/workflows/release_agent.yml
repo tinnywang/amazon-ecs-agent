@@ -6,6 +6,9 @@ on:
       version:
         description: "Version"
 
+env:
+  GH_TOKEN: ${{ secrets.ECS_AGENT_WORKFLOW_SECRET }}
+
 jobs:
   release-agent:
     name: Release Agent
@@ -20,12 +23,11 @@ jobs:
           ref: dev
           path: src/github.com/aws/amazon-ecs-agent
           fetch-depth: 0
-      - name: Disable branch protection rule
-        env:
-          GH_TOKEN: ${{ secrets.ECS_AGENT_WORKFLOW_SECRET }}
+      - name: Get branch protection rule
+        id: get-branch-protection-rule
         run: |
           set -ex
-          gh api graphql -f query='
+          brach_protection_rule_id=$(gh api graphql -f query='
           {
             repository(owner: "${{ github.repository_owner }}", name: "${{ github.event.repository.name }}") {
               ref(qualifiedName: "master") {
@@ -34,13 +36,23 @@ jobs:
                 }
               }
             }
+          }) | jq ".data.repository.ref.branchProtectionRule.id"
+          echo "BRANCH_PROTECTION_RULE_ID=$branch_protection_rule_id" >> "$GITHUB_OUTPUT"
+      - name: Disable master branch protection rule
+        run: |
+          set -ex
+          gh api graphql -f query='
+          mutation {
+            updateBranchProtectionRule(input: {
+              branchProtectionRuleId: ${{ steps.get-branch-protection-rule.outputs.BRANCH_PROTECTION_RULE_ID }},
+              pattern: "master-foo",
+            }) {
+              branchProtectionRule {
+                id
+              }
+            }
           }'
       - name: Merge dev into master
-        env:
-          # Create the pull request using amazon-ecs-bot's token instead of $GITHUB_TOKEN
-          # so that status check workflows still run on the pull request.
-          # https://docs.github.com/en/actions/security-guides/automatic-token-authentication#using-the-github_token-in-a-workflow
-          GH_TOKEN: ${{ secrets.ECS_AGENT_WORKFLOW_SECRET }}
         run: |
           set -ex
           # TODO: replace --head with the SHA of the event that triggered the workflow.
