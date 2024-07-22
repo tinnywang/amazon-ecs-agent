@@ -27,7 +27,7 @@ jobs:
         id: get-branch-protection-rule
         run: |
           set -ex
-          brach_protection_rule_id=$(gh api graphql -f query='
+          branch_protection_rule_id=$(gh api graphql -f query='
           {
             repository(owner: "${{ github.repository_owner }}", name: "${{ github.event.repository.name }}") {
               ref(qualifiedName: "master") {
