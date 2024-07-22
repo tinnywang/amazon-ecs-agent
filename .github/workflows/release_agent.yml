@@ -47,14 +47,22 @@ jobs:
               branchProtectionRuleId: ${{ steps.get-branch-protection-rule.outputs.BRANCH_PROTECTION_RULE_ID }},
               pattern: "master-foo",
             }) {
-              branchProtectionRule {
-                id
-              }
+              clientMutationId
+            }
+          }'
+      - name: Enable master branch protection rule
+        run: |
+          set -ex
+          gh api graphql -f query='
+          mutation {
+            updateBranchProtectionRule(input: {
+              branchProtectionRuleId: ${{ steps.get-branch-protection-rule.outputs.BRANCH_PROTECTION_RULE_ID }},
+              pattern: "master-foo",
+            }) {
+              clientMutationId
             }
           }'
       - name: Merge dev into master
         run: |
           set -ex
-          # TODO: replace --head with the SHA of the event that triggered the workflow.
-          pr_url=$(gh pr create --fill-first --base master --head dev)
-          gh pr merge $pr_url --auto -m
+          git push origin dev:master
