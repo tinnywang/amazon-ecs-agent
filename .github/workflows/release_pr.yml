@@ -23,6 +23,7 @@ jobs:
           ref: dev
           path: src/github.com/aws/amazon-ecs-agent
       - name: Get GO_VERSION
+        id: get-go-version
         run: |
           set -eou pipefail
           go_version=$(cat -e GO_VERSION)
