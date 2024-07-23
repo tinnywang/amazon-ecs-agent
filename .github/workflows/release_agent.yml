@@ -1,6 +1,7 @@
 name: Release Agent
 
 on:
+  # TODO: change back to https://github.com/tinnywang/amazon-ecs-agent/commit/497fe2062431611bba7d6cdcb62beb274b9f2b80
   workflow_dispatch:
     inputs:
       version:
@@ -50,7 +51,11 @@ jobs:
               clientMutationId
             }
           }'
-      - name: Enable master branch protection rule
+      - name: Merge dev into master
+        run: |
+          set -ex
+          git push origin dev:master
+      - name: Re-enable master branch protection rule
         if: always()
         run: |
           set -ex
@@ -58,12 +63,8 @@ jobs:
           mutation {
             updateBranchProtectionRule(input: {
               branchProtectionRuleId: ${{ steps.get-branch-protection-rule.outputs.BRANCH_PROTECTION_RULE_ID }},
-              pattern: "master-foo",
+              pattern: "master",
             }) {
               clientMutationId
             }
           }'
-      - name: Merge dev into master
-        run: |
-          set -ex
-          git push origin dev:master
