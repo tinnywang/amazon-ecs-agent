@@ -51,6 +51,7 @@ jobs:
             }
           }'
       - name: Enable master branch protection rule
+        if: always()
         run: |
           set -ex
           gh api graphql -f query='
