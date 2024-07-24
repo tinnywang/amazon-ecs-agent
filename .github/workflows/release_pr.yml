@@ -6,8 +6,41 @@ on:
       version:
         description: "Version"
         required: true
+      al1-version:
+        description: "AL1 Version (defaults to Version)"
+        required: false
 
 jobs:
+  update-al1:
+    name: Update AL1
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/github.com/aws/amazon-ecs-agent
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: AmazonLinuxLegacy2018
+          path: src/github.com/aws/amazon-ecs-agent
+      - name: Update VERSION
+        run: |
+          set -ex
+          echo ${{ inputs.al1-version || inputs.version }} > VERSION
+      - name: Commit Changes and Push
+        run: |
+          set -ex
+          commit_message="No release: update agent version to ${{ inputs.version }}"
+          if [[ -n ${{ inputs.al1-version }} ]]; then
+            commit_message="Update AL1 version to ${{ inputs.al1-version }}"
+          fi
+          git add -A
+          # Commit as the github-actions bot.
+          # https://github.com/actions/checkout?tab=readme-ov-file#push-a-commit-using-the-built-in-token
+          git -c user.name="github-actions[bot]" \
+            -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -m "$commit_message"
+          git push --set-upstream origin AmazonLinuxLegacy2018
+
   release-pull-request:
     name: Release Pull Request
     runs-on: ubuntu-latest
