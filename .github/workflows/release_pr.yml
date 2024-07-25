@@ -30,7 +30,7 @@ jobs:
         run: |
           set -ex
           commit_message="No release: update agent version to ${{ inputs.version }}"
-          if [[ -n ${{ inputs.al1-version }} ]]; then
+          if [[ -n "${{ inputs.al1-version }}" ]]; then
             commit_message="Update AL1 version to ${{ inputs.al1-version }}"
           fi
           git add -A
