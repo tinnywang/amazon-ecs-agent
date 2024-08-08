@@ -27,17 +27,23 @@ import (
 	"testing"
 	"time"
 
+	"github.com/aws/amazon-ecs-agent/agent/acs/session"
 	"github.com/aws/amazon-ecs-agent/agent/api"
 	apicontainer "github.com/aws/amazon-ecs-agent/agent/api/container"
 	apitask "github.com/aws/amazon-ecs-agent/agent/api/task"
 	"github.com/aws/amazon-ecs-agent/agent/config"
+	"github.com/aws/amazon-ecs-agent/agent/data"
 	"github.com/aws/amazon-ecs-agent/agent/dockerclient"
 	"github.com/aws/amazon-ecs-agent/agent/dockerclient/dockerapi"
 	"github.com/aws/amazon-ecs-agent/agent/dockerclient/sdkclientfactory"
 	"github.com/aws/amazon-ecs-agent/agent/engine/dockerstate"
+	"github.com/aws/amazon-ecs-agent/ecs-agent/acs/model/ecsacs"
+	acssession "github.com/aws/amazon-ecs-agent/ecs-agent/acs/session"
+	"github.com/aws/amazon-ecs-agent/ecs-agent/acs/session/testconst"
 	apicontainerstatus "github.com/aws/amazon-ecs-agent/ecs-agent/api/container/status"
 	apitaskstatus "github.com/aws/amazon-ecs-agent/ecs-agent/api/task/status"
 	"github.com/aws/amazon-ecs-agent/ecs-agent/credentials"
+	"github.com/aws/amazon-ecs-agent/ecs-agent/metrics"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -954,4 +960,43 @@ func TestImageWithDigestInteg(t *testing.T) {
 	err = taskEngine.(*DockerTaskEngine).removeContainer(task, container)
 	require.NoError(t, err, "failed to remove container during cleanup")
 	removeImage(t, localRegistryBusyboxImage)
+}
+
+// Tests that a task, its containers, and its resources are all stopped when a task stop verification ACK message is received.
+func TestTaskStopVerificationACKResponder(t *testing.T) {
+	taskEngine, done, _ := setupWithDefaultConfig()
+	defer done()
+
+	task := createTestTask("test_task")
+	go taskEngine.AddTask(task)
+
+	verifyContainerManifestPulledStateChange(t, taskEngine)
+	verifyTaskManifestPulledStateChange(t, taskEngine)
+	verifyContainerRunningStateChange(t, taskEngine)
+	verifyTaskRunningStateChange(t, taskEngine)
+
+	manifestMessageIDAccessor := session.NewManifestMessageIDAccessor()
+	manifestMessageIDAccessor.SetMessageID("manifest-message-id")
+
+	taskStopper := session.NewTaskStopper(taskEngine, data.NewNoopClient())
+	responder := acssession.NewTaskStopVerificationACKResponder(taskStopper, manifestMessageIDAccessor, metrics.NewNopEntryFactory())
+
+	handler := responder.HandlerFunc().(func(*ecsacs.TaskStopVerificationAck))
+	handler(&ecsacs.TaskStopVerificationAck{
+		GeneratedAt: aws.Int64(testconst.DummyInt),
+		MessageId:   aws.String(manifestMessageIDAccessor.GetMessageID()),
+		StopTasks: []*ecsacs.TaskIdentifier{
+			{
+				TaskArn: aws.String(task.Arn),
+			},
+		},
+	})
+
+	verifyContainerStoppedStateChange(t, taskEngine)
+	verifyTaskStoppedStateChange(t, taskEngine)
+
+	dockerClient := taskEngine.(*DockerTaskEngine).client
+	status, container := dockerClient.DescribeContainer(context.Background(), task.Containers[0].RuntimeID)
+	require.Equal(t, apicontainerstatus.ContainerStopped, status)
+	require.NoError(t, container.Error)
 }
