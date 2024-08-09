@@ -1,3 +1,6 @@
+//go:build integration
+// +build integration
+
 package session_test
 
 import (
@@ -18,7 +21,7 @@ import (
 
 // Tests that a task, its containers, and its resources are all stopped when a task stop verification ACK message is received.
 func TestTaskStopVerificationACKResponder(t *testing.T) {
-	taskEngine, done, _ := engine.Setup(engine.DefaulTestConfigIntegTest(), nil, t)
+	taskEngine, done, _ := engine.Setup(engine.DefaultTestConfigIntegTest(), nil, t)
 	defer done()
 
 	task := engine.CreateTestTask("test_task")
