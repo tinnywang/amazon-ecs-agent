@@ -26,7 +26,6 @@ import (
 	"github.com/aws/amazon-ecs-agent/ecs-agent/logger"
 	"github.com/aws/amazon-ecs-agent/ecs-agent/metrics"
 	"github.com/aws/amazon-ecs-agent/ecs-agent/wsclient"
-	"github.com/aws/aws-sdk-go/aws/credentials"
 )
 
 // clientServer implements ClientServer for acs.
@@ -46,7 +45,7 @@ func NewACSClientFactory() wsclient.ClientFactory {
 // The returned struct should have both 'Connect' and 'Serve' called upon it
 // before being used.
 func (*acsClientFactory) New(url string,
-	credentialProvider *credentials.Credentials,
+	credentialProvider aws.Credentials,
 	rwTimeout time.Duration,
 	cfg *wsclient.WSClientMinAgentConfig,
 	metricsFactory metrics.EntryFactory) wsclient.ClientServer {

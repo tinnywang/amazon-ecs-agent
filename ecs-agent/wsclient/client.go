@@ -43,7 +43,7 @@ import (
 	"github.com/aws/amazon-ecs-agent/ecs-agent/utils/retry"
 	"github.com/aws/amazon-ecs-agent/ecs-agent/wsclient/wsconn"
 
-	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go/private/protocol/json/jsonutil"
 	"github.com/gorilla/websocket"
 	"github.com/pkg/errors"
@@ -174,7 +174,7 @@ type ClientServerImpl struct {
 	// conn holds the underlying low-level websocket connection
 	conn wsconn.WebsocketConn
 	// CredentialProvider is used to retrieve AWS credentials
-	CredentialProvider *credentials.Credentials
+	CredentialProvider aws.Credentials
 	// RequestHandlers is a map from message types to handler functions of the
 	// form:
 	//     "FooMessage": func(message *ecsacs.FooMessage)

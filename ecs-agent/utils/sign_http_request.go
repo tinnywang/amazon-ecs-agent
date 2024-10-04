@@ -14,21 +14,23 @@
 package utils
 
 import (
+	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
-	"io"
 	"net/http"
 	"time"
 
 	"github.com/aws/amazon-ecs-agent/ecs-agent/logger"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	v4 "github.com/aws/aws-sdk-go/aws/signer/v4"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	v4 "github.com/aws/aws-sdk-go-v2/aws/signer/v4"
 	"github.com/pkg/errors"
 )
 
 // SignHTTPRequest signs an http.Request struct with authv4 using the given region, service, and credentials.
-func SignHTTPRequest(req *http.Request, region, service string, creds *credentials.Credentials, body io.ReadSeeker) error {
-	signer := v4.NewSigner(creds)
-	_, err := signer.Sign(req, body, service, region, time.Now())
+func SignHTTPRequest(req *http.Request, region, service string, creds aws.Credentials, body []byte) error {
+	hash := sha256.Sum256(body)
+	err := v4.NewSigner().SignHTTP(context.TODO(), creds, req, hex.EncodeToString(hash[:]), service, region, time.Now())
 	if err != nil {
 		logger.Warn(fmt.Sprintf("Signing HTTP request failed: %v", err))
 		return errors.Wrap(err, "aws sdk http signer: failed to sign http request")

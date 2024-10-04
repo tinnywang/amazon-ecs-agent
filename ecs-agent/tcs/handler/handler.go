@@ -30,7 +30,7 @@ import (
 	"github.com/aws/amazon-ecs-agent/ecs-agent/tcs/model/ecstcs"
 	"github.com/aws/amazon-ecs-agent/ecs-agent/utils/retry"
 	"github.com/aws/amazon-ecs-agent/ecs-agent/wsclient"
-	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/cihub/seelog"
 )
 
@@ -61,7 +61,7 @@ type telemetrySession struct {
 	agentHash                     string
 	containerRuntimeVersion       string
 	disableMetrics                bool
-	credentialsProvider           *credentials.Credentials
+	credentialsProvider           aws.Credentials
 	cfg                           *wsclient.WSClientMinAgentConfig
 	deregisterInstanceEventStream *eventstream.EventStream
 	heartbeatTimeout              time.Duration
@@ -82,7 +82,7 @@ func NewTelemetrySession(
 	agentHash string,
 	containerRuntimeVersion string,
 	disableMetrics bool,
-	credentialsProvider *credentials.Credentials,
+	credentialsProvider aws.Credentials,
 	cfg *wsclient.WSClientMinAgentConfig,
 	deregisterInstanceEventStream *eventstream.EventStream,
 	heartbeatTimeout time.Duration,
