@@ -4,3 +4,6 @@
 [submodule "amazon-vpc-cni-plugins"]
 	path = amazon-vpc-cni-plugins
 	url = https://github.com/aws/amazon-vpc-cni-plugins.git
+[submodule "aws-sdk-go-v2"]
+	path = aws-sdk-go-v2
+	url = git@github.com:aws/aws-sdk-go-v2
